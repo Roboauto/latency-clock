@@ -166,11 +166,11 @@ gst_timeoverlayparse_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
   imgdata = frame->data[0];
 
   /* Centre Vertically: */
-  imgdata += (frame->info.height - 6 * 8) * frame->info.stride[0] / 2;
+  // imgdata += (frame->info.height - 6 * 8) * frame->info.stride[0] / 2;
 
   /* Centre Horizontally: */
-  imgdata += (frame->info.width - 64 * 8) * frame->info.finfo->pixel_stride[0]
-      / 2;
+  // imgdata += (frame->info.width - 64 * 8) * frame->info.finfo->pixel_stride[0]
+  //     / 2;
 
   timestamps.buffer_time = read_timestamp (0, imgdata,
       frame->info.stride[0], frame->info.finfo->pixel_stride[0]);
