@@ -24,6 +24,8 @@
 #include <math.h>
 #include <gst/gst.h>
 
+#include "timepolyfill.h"
+
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data);
 static gchar* get_current_mode (void);
 
