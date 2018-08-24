@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <gst/gst.h>
 
+#include "timepolyfill.h"
+
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data);
 
 int main(int argc, char* argv[])
