@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6.2)
-project(gsttimestampoverlay)
+project(latencyclock)
 set(CMAKE_CXX_STANDARD 11)
 
 include(FindPkgConfig)
@@ -7,7 +7,8 @@ pkg_check_modules(DEPENDENCIES
         gstreamer-1.0
         gstreamer-video-1.0)
 
-set(SOURCE_FILES
+#PLUGIN
+set(PLUGIN_SOURCE_FILES
         gsttimeoverlayparse.c
         gsttimeoverlayparse.h
         gsttimestampoverlay.c
@@ -15,8 +16,22 @@ set(SOURCE_FILES
         plugin.c)
 
 add_definitions(${DEPENDENCIES_CFLAGS})
-add_library(gsttimestampoverlay SHARED ${SOURCE_FILES})
+add_library(latencyclock SHARED ${PLUGIN_SOURCE_FILES})
 
-target_link_libraries(gsttimestampoverlay ${DEPENDENCIES_LDFLAGS})
-target_include_directories(gsttimestampoverlay PUBLIC ${DEPENDENCIES_INCLUDE_DIRS})
-target_compile_options(gsttimestampoverlay PUBLIC ${DEPENDENCIES_CFLAGS_OTHER})
+target_link_libraries(latencyclock ${DEPENDENCIES_LDFLAGS})
+target_include_directories(latencyclock PUBLIC ${DEPENDENCIES_INCLUDE_DIRS})
+target_compile_options(latencyclock PUBLIC ${DEPENDENCIES_CFLAGS_OTHER})
+
+#SERVER
+set(SERVER_SOURCE_FILES server.c)
+
+add_executable(server ${SERVER_SOURCE_FILES})
+target_link_libraries(server ${DEPENDENCIES_LDFLAGS} -lm)
+target_include_directories(server PUBLIC ${DEPENDENCIES_INCLUDE_DIRS})
+
+#CLIENT
+set(CLIENT_SOURCE_FILES client.c)
+
+add_executable(client ${CLIENT_SOURCE_FILES})
+target_link_libraries(client ${DEPENDENCIES_LDFLAGS})
+target_include_directories(client PUBLIC ${DEPENDENCIES_INCLUDE_DIRS})

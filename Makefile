@@ -1,8 +1,8 @@
-all: client server gsttimestampoverlay.so
+all: client server liblatencyclock.so
 
 CFLAGS?=-Wall -Werror -O2
 
-gsttimestampoverlay.so : \
+liblatencyclock.so : \
         gsttimestampoverlay.c \
         gsttimestampoverlay.h \
         gsttimeoverlayparse.c \
@@ -21,4 +21,4 @@ dist:
 	git archive -o latency-clock-0.0.1.tar HEAD --prefix=latency-clock-0.0.1/
 
 clean:
-	rm -f client server gsttimestampoverlay.so
+	rm -f client server liblatencyclock.so
