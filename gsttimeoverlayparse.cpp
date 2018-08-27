@@ -40,6 +40,7 @@
 #include "gsttimeoverlayparse.h"
 
 #include <string.h>
+#include <limits>
 
 GST_DEBUG_CATEGORY_STATIC (gst_timeoverlayparse_debug_category);
 #define GST_CAT_DEFAULT gst_timeoverlayparse_debug_category
@@ -48,10 +49,6 @@ GST_DEBUG_CATEGORY_STATIC (gst_timeoverlayparse_debug_category);
 static GstFlowReturn gst_timeoverlayparse_transform_frame_ip (GstVideoFilter * filter,
     GstVideoFrame * frame);
 
-enum
-{
-  PROP_0
-};
 
 /* pad templates */
 
@@ -69,6 +66,40 @@ enum
 G_DEFINE_TYPE_WITH_CODE (GstTimeOverlayParse, gst_timeoverlayparse, GST_TYPE_VIDEO_FILTER,
   GST_DEBUG_CATEGORY_INIT (gst_timeoverlayparse_debug_category, "timeoverlayparse", 0,
   "debug category for timeoverlayparse element"));
+
+enum {
+    PROP_LATENCY
+};
+
+static void gst_timeoverlayparse_set_property (GObject *object, guint prop_id,
+                                               const GValue *value, GParamSpec *pspec)
+{
+  GstTimeOverlayParse *overlayParse = GST_TIMEOVERLAYPARSE (object);
+
+  switch (prop_id) {
+    case PROP_LATENCY:
+          overlayParse->latency = g_value_get_uint64 (value);
+          break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+          break;
+  }
+}
+
+static void gst_timeoverlayparse_get_property (GObject *object, guint prop_id,
+                                               GValue *value, GParamSpec *pspec)
+{
+  GstTimeOverlayParse *overlayParse = GST_TIMEOVERLAYPARSE (object);
+
+  switch (prop_id) {
+    case PROP_LATENCY:
+          g_value_set_uint64(value, overlayParse->latency);
+          break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+          break;
+  }
+}
 
 static void
 gst_timeoverlayparse_class_init (GstTimeOverlayParseClass * klass)
@@ -90,11 +121,26 @@ gst_timeoverlayparse_class_init (GstTimeOverlayParseClass * klass)
       "William Manley <will@williammanley.net>");
 
   video_filter_class->transform_frame_ip = GST_DEBUG_FUNCPTR (gst_timeoverlayparse_transform_frame_ip);
+
+
+  //properties
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  /* define virtual function pointers */
+  object_class->set_property = gst_timeoverlayparse_set_property;
+  object_class->get_property = gst_timeoverlayparse_get_property;
+
+  /* define properties */
+  g_object_class_install_property (object_class, PROP_LATENCY,
+                                   g_param_spec_uint64 ("latency", "latency", "measured latency from image",
+                                                         0, std::numeric_limits<guint64>::max(), 0,
+                                                         (GParamFlags) (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 
 static void
 gst_timeoverlayparse_init (GstTimeOverlayParse *timeoverlayparse)
 {
+
 }
 
 typedef struct {
@@ -163,7 +209,7 @@ gst_timeoverlayparse_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
       GST_TIME_ARGS(running_time),
       GST_TIME_ARGS(clock_time));
 
-  imgdata = frame->data[0];
+  imgdata = (unsigned char*)frame->data[0];
 
   /* Centre Vertically: */
   // imgdata += (frame->info.height - 6 * 8) * frame->info.stride[0] / 2;
@@ -197,6 +243,7 @@ gst_timeoverlayparse_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
       GST_TIME_ARGS(timestamps.render_realtime));
 
   latency = clock_time - timestamps.render_realtime;
+  overlay->latency = latency;
 
   GST_INFO_OBJECT (filter, "Latency: %" GST_TIME_FORMAT,
       GST_TIME_ARGS(latency));

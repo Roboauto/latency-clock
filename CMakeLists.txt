@@ -9,11 +9,11 @@ pkg_check_modules(DEPENDENCIES
 
 #PLUGIN
 set(PLUGIN_SOURCE_FILES
-        gsttimeoverlayparse.c
+        gsttimeoverlayparse.cpp
         gsttimeoverlayparse.h
-        gsttimestampoverlay.c
+        gsttimestampoverlay.cpp
         gsttimestampoverlay.h
-        plugin.c)
+        plugin.cpp)
 
 add_definitions(${DEPENDENCIES_CFLAGS})
 add_library(latencyclock SHARED ${PLUGIN_SOURCE_FILES})

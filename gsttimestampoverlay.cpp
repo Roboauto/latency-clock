@@ -109,8 +109,8 @@ gst_timestampoverlay_init (GstTimeStampOverlay *timestampoverlay)
   GST_OBJECT_FLAG_SET (timestampoverlay, GST_ELEMENT_FLAG_REQUIRE_CLOCK);
 
   timestampoverlay->latency = GST_CLOCK_TIME_NONE;
-  timestampoverlay->realtime_clock = g_object_new (GST_TYPE_SYSTEM_CLOCK,
-      "clock-type", GST_CLOCK_TYPE_REALTIME, NULL);
+  timestampoverlay->realtime_clock = GST_CLOCK(g_object_new (GST_TYPE_SYSTEM_CLOCK,
+      "clock-type", GST_CLOCK_TYPE_REALTIME, NULL));
   GST_OBJECT_FLAG_SET (timestampoverlay->realtime_clock,
       GST_CLOCK_FLAG_CAN_SET_MASTER);
 }
@@ -228,7 +228,7 @@ gst_timestampoverlay_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
       overlay->realtime_clock, render_time);
   GST_OBJECT_UNLOCK (overlay->realtime_clock);
 
-  imgdata = frame->data[0];
+  imgdata = (unsigned char*)frame->data[0];
 
   /* Centre Vertically: */
   // imgdata += (frame->info.height - 6 * 8) * frame->info.stride[0] / 2;

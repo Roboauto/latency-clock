@@ -37,6 +37,8 @@ typedef struct _GstTimeOverlayParseClass GstTimeOverlayParseClass;
 struct _GstTimeOverlayParse
 {
   GstVideoFilter base_timeoverlayparse;
+
+  GstClockTimeDiff latency;
 };
 
 struct _GstTimeOverlayParseClass
