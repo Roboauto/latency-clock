@@ -46,13 +46,13 @@ int main(int argc, char* argv[])
   if (argc > 1)
     source_pipeline = argv[1];
   else
-    source_pipeline = "v4l2src";
+    source_pipeline = "udpsrc port=5000";
 
   epipeline = gst_parse_launch (g_strdup_printf (
-      "%s "
-      "! video/x-raw,width=1280,height=720 "
-      "! timeoverlayparse "
-      "! fakesink", source_pipeline), &err);
+          "%s "
+          "! application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96 ! rtph264depay ! avdec_h264 ! videoconvert "
+          "! timeoverlayparse "
+          "! videoconvert ! autovideosink", source_pipeline), &err);
 
   if (err) {
     fprintf(stderr, "Error creating pipeline: %s\n", err->message);

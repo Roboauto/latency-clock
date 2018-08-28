@@ -49,10 +49,11 @@ int main(int argc, char* argv[])
   if (argc > 1)
     sink_pipeline = argv[1];
   else
-    sink_pipeline = "videoconvert ! mmalvideosink name=mmalsink";
+    sink_pipeline = "videoconvert ! videoscale ! video/x-raw,width=640,height=480 ! x264enc speed-preset=ultrafast bitrate=4096 tune=zerolatency ! rtph264pay name=pay timestamp-offset=0 ! udpsink host=127.0.0.1 port=5000";
+
 
   pipeline_description = g_strdup_printf (
-      "videotestsrc is-live=true pattern=white "
+      "videotestsrc is-live=true "
       "! %s "
       "! timestampoverlay "
       "! queue "
@@ -189,5 +190,5 @@ get_current_mode (void)
   return g_strdup_printf ("video/x-raw,width=640,height=240,framerate=%i/%i",
       fps.n, fps.d);
 error:
-  return "video/x-raw,width=640,height=240,framerate=50/1";
+  return "video/x-raw,width=640,height=480,framerate=50/1";
 }
