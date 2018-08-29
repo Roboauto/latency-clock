@@ -224,9 +224,15 @@ gst_timestampoverlay_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
     render_time = clock_time;
 
   GST_OBJECT_LOCK (overlay->realtime_clock);
+  /*
   render_realtime = gst_clock_unadjust_unlocked (
-      overlay->realtime_clock, render_time);
+      overlay->realtime_clock, render_time);*/
+  render_realtime = gst_clock_get_time(overlay->realtime_clock) - latency;
   GST_OBJECT_UNLOCK (overlay->realtime_clock);
+/*
+  printf("latency in render: %" GST_TIME_FORMAT "\n", GST_TIME_ARGS(latency));
+  printf("render real time: %" GST_TIME_FORMAT "\n", GST_TIME_ARGS(render_realtime));
+*/
 
   imgdata = (unsigned char*)frame->data[0];
 
@@ -234,9 +240,8 @@ gst_timestampoverlay_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
   // imgdata += (frame->info.height - 6 * 8) * frame->info.stride[0] / 2;
 
   /* Centre Horizontally: */
-  // imgdata += (frame->info.width - 64 * 8) * frame->info.finfo->pixel_stride[0]
-    //   / 2;
-
+  // imgdata += (frame->info.width - 64 * 8) * frame->info.finfo->pixel_stride[0] / 2;
+/*
   draw_timestamp (0, buffer_time, imgdata, frame->info.stride[0],
       frame->info.finfo->pixel_stride[0]);
   draw_timestamp (1, stream_time, imgdata, frame->info.stride[0],
@@ -247,7 +252,8 @@ gst_timestampoverlay_transform_frame_ip (GstVideoFilter * filter, GstVideoFrame 
       frame->info.finfo->pixel_stride[0]);
   draw_timestamp (4, render_time, imgdata, frame->info.stride[0],
       frame->info.finfo->pixel_stride[0]);
-  draw_timestamp (5, render_realtime, imgdata, frame->info.stride[0],
+      */
+  draw_timestamp (0, render_realtime, imgdata, frame->info.stride[0],
       frame->info.finfo->pixel_stride[0]);
 
   return GST_FLOW_OK;
