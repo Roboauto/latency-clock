@@ -15,6 +15,10 @@ set(PLUGIN_SOURCE_FILES
         gsttimestampoverlay.h
         plugin.cpp)
 
+if(${VIBRANTE_PDK})
+    list(TRANSFORM DEPENDENCIES_INCLUDE_DIRS PREPEND "${VIBRANTE_PDK}/targetfs")
+endif()
+
 add_definitions(${DEPENDENCIES_CFLAGS})
 add_library(latencyclock SHARED ${PLUGIN_SOURCE_FILES})
 
