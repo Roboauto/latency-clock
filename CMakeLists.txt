@@ -15,7 +15,7 @@ set(PLUGIN_SOURCE_FILES
         gsttimestampoverlay.h
         plugin.cpp)
 
-if(${VIBRANTE_PDK})
+if(${VIBRANTE})
     list(TRANSFORM DEPENDENCIES_INCLUDE_DIRS PREPEND "${VIBRANTE_PDK}/targetfs")
 endif()
 
